@@ -4,7 +4,13 @@
 \alias{shuffle_group_matrix}
 \title{shuffle_group_matrix, Reorder cell type-specific expression matrix during 
 co-expression simulation. Copied from ACORDE (https://github.com/ConesaLab/acorde)
-to facilitate stability and running within our scripts}
+to facilitate stability and running within our scripts
+This function is a slightly modified copy of the `shuffle_group_matrix` function
+from the `Acorde` package (v1.0.0), originally developed by Arzalluz-Luque A, 
+Salguero P, Tarazona S, Conesa A. (2022). acorde unravels functionally 
+interpretable networks of isoform co-usage from single cell data. Nature communications
+1828. DOI: 10.1038/s41467-022-29497-w. The original package is licensed under the 
+GPL-3 license.}
 \usage{
 shuffle_group_matrix(sim_data, feature_ids, group_pattern, ngroups)
 }

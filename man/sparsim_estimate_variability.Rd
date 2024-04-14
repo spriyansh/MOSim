@@ -16,6 +16,10 @@ An array of variability values having \code{N_genes} elements (\code{N_genes = n
 Function to estimate the variability values from the genes in \code{data}.
 }
 \details{
+This function is a copy of the `SPARSIM_estimate_variability` function from the
+`SPARSim` package (v0.9.5), originally developed by Giacomo Baruzzo,
+Ilaria Patuzzi, Barbara Di Camillo (2020). The original package is licensed
+under the GPL-3 license.
 This function is used in \code{sparsim_estimate_parameter_from_data} to compute SPARSim "variability" parameter, given a real count table as input.
 If the count table contains more than one experimental condition, then the function is applied to each experimental conditions.
 }

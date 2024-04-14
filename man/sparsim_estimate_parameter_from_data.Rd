@@ -20,3 +20,9 @@ A SPARSim simulation parameters
 Function to estimate SPARSim simulation parameters (intensity, variability and library sizes) from a real count table.
 If the real count table contains more than one experimental condition, it is possible to estimate the parameters for each experimental condition.
 }
+\details{
+This function is a copy of the `SPARSIM_estimate_parameter_from_data` function from the
+`SPARSim` package (v0.9.5), originally developed by Giacomo Baruzzo,
+Ilaria Patuzzi, Barbara Di Camillo (2020). The original package is licensed
+under the GPL-3 license.
+}

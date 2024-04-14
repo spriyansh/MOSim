@@ -20,6 +20,12 @@ A tibble with number of columns equal to number of celltypes, rows
 \description{
 Function to make the tibble with cluster combinations for the gene expression
 patterns along the cells
+This function is a slightly modified copy of the `make_cluster_patterns` function
+from the `Acorde` package (v1.0.0), originally developed by Arzalluz-Luque A, 
+Salguero P, Tarazona S, Conesa A. (2022). acorde unravels functionally 
+interpretable networks of isoform co-usage from single cell data. Nature communications
+1828. DOI: 10.1038/s41467-022-29497-w. The original package is licensed under the 
+GPL-3 license.
 }
 \examples{
 patterns <- make_cluster_patterns(numcells = 4, clusters = 8)

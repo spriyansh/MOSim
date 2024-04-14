@@ -219,7 +219,9 @@ You can extract the simulated matrices for all experimental conditions
 and biological replicates using the `scOmicResults` function. This
 provides you with the synthetic data for further analysis and
 visualization.
+Furthermore, you can use scOmicResults to also extract a matrix with the
+counts for only transcription factors.
 
 ```{r results, eval = FALSE}
-res <- scOmicResults(sim)
+res <- scOmicResults(sim, TF = TRUE)
 ```

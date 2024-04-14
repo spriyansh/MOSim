@@ -774,6 +774,11 @@ scOmicSettings <- function(sim){
 #' scOmicResults
 #'
 #' @param sim a simulated object from scMOSim function
+#' @param TF (optional) default is FALSE, if true, extract TF dataframe
+#' @param TFlist (optional), default is NULL. If a vector of gene names
+#'        is given, they are extracted by the results object. If no vector
+#'        is given, using the list of human TF from 
+#'        {http://humantfs.ccbr.utoronto.ca/download.php}
 #'
 #' @return list of seurat objects with simulated data
 #' @export
@@ -785,6 +790,31 @@ scOmicSettings <- function(sim){
 #' sim <- scMOSim(omicsList, cell_types)
 #' res <- scOmicResults(sim)
 
-scOmicResults <- function(sim){
-  return(sim[grepl("Group_", names(sim))])
+scOmicResults <- function(sim, TF = FALSE, TFlist = NULL){
+  df <- sim[grepl("Group_", names(sim))]
+  if (isTRUE(TF)){
+    if (is.null(TFlist)){
+      # Extract TF from the TF_human vector loaded in the package
+      data_env <- new.env(parent = emptyenv())
+      data("TF_human", envir = data_env, package = "MOSim")
+      TF_human <- data_env[["TF_human"]]
+    } else {
+      if (!is.vector(TFlist) || length(TFlist) <= 1) {
+        stop("Error: variable 'TFlist' is not a vector of genenames")
+      } else{
+        TF_human <- TFlist
+      }
+    }
+    # Extract the TFs according to the users list
+    for (group_name in names(df)) {
+      group <- df[[group_name]]
+      for (replicate_name in names(group)) {
+        replicate <- group[[replicate_name]]
+        df[[group_name]][[replicate_name]]$TF <- subset(replicate$`sim_scRNA-seq`, features = TF_human)
+      }
+    }
+  }
+  return(df)
 }
+
+

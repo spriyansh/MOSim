@@ -52,3 +52,14 @@ data(scrna)
 #' @docType data
 #' @usage data("scatac")
 data(scatac)
+
+#' Data to extract human TF
+#' @format vector of gene names
+#'  \describe{
+#'      \item{vector}{gene names corresponding to TF}
+#'      }
+#'  @source {http://humantfs.ccbr.utoronto.ca/download.php}
+#' @name TF_human
+#' @docType data
+#' @usage data("TF_human")
+data(TF_human)

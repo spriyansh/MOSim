@@ -34,5 +34,8 @@ A list of 5 elements:
   - \code{batch_factors_matrix}: the multiplicative factor used in batch generation (genes on rows, samples on columns), if \code{output_batch_matrix} = TRUE. NULL otherwise.
 }
 \description{
-Function to simulate a raw count table
+This function is a copy of the `SPARSIM_simulation` function from the
+`SPARSim` package (v0.9.5), originally developed by Giacomo Baruzzo,
+Ilaria Patuzzi, Barbara Di Camillo (2020). The original package is licensed
+under the GPL-3 license.
 }

@@ -41,11 +41,14 @@ SPARSim simulation parameter describing one experimental condition
 }
 \description{
 Function to create a SPARSim simulation parameter.
-}
-\details{
+This function is a copy of the `SPARSIM_create_simulation_parameter` function from the 
+`SPARSim` package (v0.9.5), originally developed by Giacomo Baruzzo, 
+Ilaria Patuzzi, Barbara Di Camillo (2020). The original package is licensed 
+under the GPL-3 license.
 To simulate N feature (e.g. genes), user must specify N values of gene expression level and gene expression variability in the function input parameters \code{intensity} and \code{variability}, respectively.
 To simulate M samples (i.e. cells), user must specify M values of sample library size in the function input parameter \code{library_size}.
-
+}
+\details{
 User can optionally specify the names to assign at the single feature and sample to simulate (function input parameters \code{feature_names} and \code{sample_names}, respectively,
 as well as the name of the experimental condition (function input parameter \code{condition_name}). If the user does not specify such information, the function will set some default values.
 

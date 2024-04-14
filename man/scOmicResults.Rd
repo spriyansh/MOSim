@@ -4,10 +4,17 @@
 \alias{scOmicResults}
 \title{scOmicResults}
 \usage{
-scOmicResults(sim)
+scOmicResults(sim, TF = FALSE, TFlist = NULL)
 }
 \arguments{
 \item{sim}{a simulated object from scMOSim function}
+
+\item{TF}{(optional) default is FALSE, if true, extract TF dataframe}
+
+\item{TFlist}{(optional), default is NULL. If a vector of gene names
+is given, they are extracted by the results object. If no vector
+is given, using the list of human TF from 
+{http://humantfs.ccbr.utoronto.ca/download.php}}
 }
 \value{
 list of seurat objects with simulated data

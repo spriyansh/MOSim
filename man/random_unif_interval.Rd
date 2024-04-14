@@ -3,7 +3,11 @@
 \name{random_unif_interval}
 \alias{random_unif_interval}
 \title{random_unif_interval
-Function to call the C code}
+Function to call the C code
+This function is a copy of the `random_unif_interval` function from the 
+`SPARSim` package (v0.9.5), originally developed by Giacomo Baruzzo, 
+Ilaria Patuzzi, Barbara Di Camillo (2020). The original package is licensed 
+under the GPL-3 license.}
 \usage{
 random_unif_interval(size, max_val)
 }
@@ -15,4 +19,8 @@ random_unif_interval(size, max_val)
 \description{
 random_unif_interval
 Function to call the C code
+This function is a copy of the `random_unif_interval` function from the 
+`SPARSim` package (v0.9.5), originally developed by Giacomo Baruzzo, 
+Ilaria Patuzzi, Barbara Di Camillo (2020). The original package is licensed 
+under the GPL-3 license.
 }

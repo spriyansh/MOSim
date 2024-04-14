@@ -21,3 +21,9 @@ An array of \code{length(avgAbund)} elements representing the count values for t
 \description{
 Function to simulate the technical variability (i.e. a multivariate hypergeometric on a gamma expression value array)
 }
+\details{
+This function is a copy of the `simulate_hyper` function from the
+`SPARSim` package (v0.9.5), originally developed by Giacomo Baruzzo,
+Ilaria Patuzzi, Barbara Di Camillo (2020). The original package is licensed
+under the GPL-3 license.
+}
