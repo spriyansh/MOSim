@@ -21,7 +21,9 @@ scMOSim(
   associationList = NULL,
   feature_no = 8000,
   clusters = 3,
-  cluster_size = NULL
+  cluster_size = NULL,
+  TF = FALSE,
+  TFdf = NULL
 )
 }
 \arguments{
@@ -83,6 +85,13 @@ to simulate}
 \item{cluster_size}{OPTIONAL. It may be inputted by the user. Recommended: 
 by default, its the number of features divided by the number of patterns 
 to generate.}
+
+\item{TF}{OPTIONAL default is FALSE, if true, extract TF dataframe}
+
+\item{TFdf}{OPTIONAL, default is NULL. If an association matrix of TF and 
+Target_gene is given the TF expression values are extracted. If no data.frame
+is given, using the association of human TF from 
+{https://tflink.net/}}
 }
 \value{
 a list of Seurat object, one per each omic.

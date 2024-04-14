@@ -4,10 +4,12 @@
 \alias{scOmicSettings}
 \title{scOmicSettings}
 \usage{
-scOmicSettings(sim)
+scOmicSettings(sim, TF = FALSE)
 }
 \arguments{
 \item{sim}{a simulated object from scMOSim function}
+
+\item{TF}{OPTIONAL default is FALSE, if true, extract TF association matrix}
 }
 \value{
 list of Association matrices explaining the effects of each

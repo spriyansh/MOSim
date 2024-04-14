@@ -756,7 +756,7 @@ scMOSim <- function(omics, cellTypes, numberReps = 1, numberGroups = 1,
 #' scOmicSettings
 #'
 #' @param sim a simulated object from scMOSim function
-#' @param OPTIONAL default is FALSE, if true, extract TF association matrix
+#' @param TF OPTIONAL default is FALSE, if true, extract TF association matrix
 #'
 #' @return list of Association matrices explaining the effects of each
 #' regulator to each gene
@@ -772,6 +772,71 @@ scMOSim <- function(omics, cellTypes, numberReps = 1, numberGroups = 1,
 scOmicSettings <- function(sim, TF = FALSE){
   asma <- sim$AssociationMatrices
   FC <- sim$FC
+  TFtoGene_Association <- list()
+  
+  ## Filter TFtoGene so only genes in our clusters are there
+  if (isTRUE(TF)){
+    TFtoGene <- sim$TFtoGene
+    colnames(TFtoGene) <- c("Gene_ID", "Target_ID")
+    # Extract only genes with a cluster from association matrix
+    clu <- asma$AssociationMatrix_Group_1[asma$AssociationMatrix_Group_1$Gene_cluster >= 1,]
+    TFtoGene <- TFtoGene[TFtoGene$Gene_ID %in% clu$Gene_ID,]
+    TFtoGene <- TFtoGene[TFtoGene$Target_ID %in% clu$Gene_ID, ]
+    
+    # Get opposing patterns
+    opposite_indices <- MOSim::check_patterns(sim$patterns)
+    
+    for (group_name in names(sim)){
+      if (grepl( "Group", group_name, fixed = TRUE)){
+        TFtoGene_matrix <- data.frame(Gene_ID = character(),
+                                      Target_ID = character(),
+                                      Cluster_ID = character(),
+                                      Cluster_Target = character(),
+                                      stringsAsFactors = FALSE)
+        
+        # Get association name
+        association_name <- grep(paste0(group_name, "$"), names(asma), value = TRUE)
+        
+        # Loop through each row of dataframe B
+        for (i in 1:nrow(TFtoGene)) {
+          # Extract the Gene_ID and Target_ID from dataframe B
+          gene_id <- TFtoGene$Gene_ID[i]
+          target_id <- TFtoGene$Target_ID[i]
+          
+          # Find the corresponding Cluster_ID from dataframe A for Gene_ID and Target_ID
+          mat <- asma[[association_name]]
+          
+          gene_cluster_id <- mat$Gene_cluster[mat$Gene_ID == gene_id]
+          target_cluster_id <- mat$Gene_cluster[mat$Gene_ID == target_id]
+          
+          # If a matching Cluster_ID is found, add it to dataframe C
+          if (length(gene_cluster_id) > 0 && length(target_cluster_id) > 0) {
+            # Determine regulator_effect
+            if (gene_cluster_id == target_cluster_id) {
+              regulator_effect <- "activator"
+            } else if (any(sapply(opposite_indices, function(x) all(x %in% c(gene_cluster_id, target_cluster_id))))) {
+              regulator_effect <- "repressor"
+            } else {
+              regulator_effect <- "NE"
+            }
+            
+            TFtoGene_matrix <- rbind(TFtoGene_matrix, 
+                                     data.frame(Gene_ID = gene_id,
+                                                Target_ID = target_id,
+                                                Cluster_ID = gene_cluster_id,
+                                                Cluster_Target = target_cluster_id,
+                                                regulator_effect = regulator_effect,
+                                                stringsAsFactors = FALSE))
+          } else {
+            # If no matching Cluster_ID is found for Gene_ID or Target_ID, print a message
+            print(paste("No matching Cluster_ID found for Gene_ID:", gene_id, "or Target_ID:", target_id))
+          }
+        }
+        TFtoGene_Association[[group_name]] <- TFtoGene_matrix
+      }
+    }
+  }
+
   # Function to add two new columns to a matrix based on conditions
   add_new_columns <- function(matrix_A, vector1, vector2) {
     new_col1 <- character(nrow(matrix_A))
@@ -805,6 +870,8 @@ scOmicSettings <- function(sim, TF = FALSE){
       asma[[i]]["Gene_FC"] <- FC[[i]][[1]]
     }
   }
+  
+  asma[["TFtoGene_Association"]] <- TFtoGene_Association
   
   return(asma)
 }
