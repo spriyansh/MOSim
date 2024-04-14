@@ -56,9 +56,9 @@ data(scatac)
 #' Data to extract human TF
 #' @format vector of gene names
 #'  \describe{
-#'      \item{vector}{gene names corresponding to TF}
+#'      \item{data.frame}{gene names corresponding to TF and to Target genes}
 #'      }
-#'  @source {http://humantfs.ccbr.utoronto.ca/download.php}
+#'  @source {https://tflink.net/}
 #' @name TF_human
 #' @docType data
 #' @usage data("TF_human")

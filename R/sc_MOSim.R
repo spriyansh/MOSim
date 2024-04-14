@@ -401,6 +401,11 @@ sc_param_estimation <- function(omics, cellTypes, diffGenes = list(c(0.2, 0.2)),
 #' @param cluster_size OPTIONAL. It may be inputted by the user. Recommended: 
 #'      by default, its the number of features divided by the number of patterns 
 #'      to generate.
+#' @param TF OPTIONAL default is FALSE, if true, extract TF dataframe
+#' @param TFdf OPTIONAL, default is NULL. If an association matrix of TF and 
+#'        Target_gene is given the TF expression values are extracted. If no data.frame
+#'        is given, using the association of human TF from 
+#'        {https://tflink.net/}
 #' @return a list of Seurat object, one per each omic.
 #' @export
 #'
@@ -414,7 +419,8 @@ scMOSim <- function(omics, cellTypes, numberReps = 1, numberGroups = 1,
                     diffGenes = NULL, minFC = 0.25, maxFC = 4,
                     numberCells = NULL, mean = NULL, sd = NULL, noiseRep = 0.1 , 
                     noiseGroup = 0.5, regulatorEffect = NULL, associationList = NULL, 
-                    feature_no = 8000, clusters = 3, cluster_size = NULL){
+                    feature_no = 8000, clusters = 3, cluster_size = NULL,
+                    TF = FALSE, TFdf = NULL){
   
   # Check for mandatory parameters
   if (missing(omics)){
@@ -448,6 +454,22 @@ scMOSim <- function(omics, cellTypes, numberReps = 1, numberGroups = 1,
     data_env <- new.env(parent = emptyenv())
     data("associationList", envir = data_env, package = "MOSim")
     associationList <- data_env[["associationList"]]
+  }
+  
+  # Check if we have to extract TF
+  if (isTRUE(TF)){
+    if (is.null(TFdf)){
+      # Extract TF from the TF_human vector loaded in the package
+      data_env <- new.env(parent = emptyenv())
+      data("TF_human", envir = data_env, package = "MOSim")
+      TF_human <- data_env[["TF_human"]]
+    } else {
+      if (!is.data.frame(TFdf) || dim(TFdf)[1] <= 1) {
+        stop("Error: variable 'TFdf' is not a dataframe of TF and Target_gene")
+      } else{
+        TF_human <- TFdf
+      }
+    }
   }
   
   if (is.null(regulatorEffect) && identical(names(omics[2]), "scATAC-seq")){
@@ -709,6 +731,22 @@ scMOSim <- function(omics, cellTypes, numberReps = 1, numberGroups = 1,
   seu_groups[["AssociationMatrices"]] <- Association_list
   seu_groups[["Variability"]] <- VAR_used_list
   
+  
+  # If TF, extract their count matrix
+  if (isTRUE(TF)){
+    # Extract the TFs according to the users list
+    for (group_name in names(seu_groups)) {
+      if (grepl( "Group", group_name, fixed = TRUE)){
+        group <- seu_groups[[group_name]]
+        for (replicate_name in names(group)) {
+          replicate <- group[[replicate_name]]
+          seu_groups[[group_name]][[replicate_name]]$sim_TF <- subset(replicate$`sim_scRNA-seq`, features = TF_human$TF)
+        }
+      }
+    }
+    seu_groups[["TFtoGene"]] <- TF_human
+  }
+  
   return(seu_groups)
   
 }
@@ -718,6 +756,7 @@ scMOSim <- function(omics, cellTypes, numberReps = 1, numberGroups = 1,
 #' scOmicSettings
 #'
 #' @param sim a simulated object from scMOSim function
+#' @param OPTIONAL default is FALSE, if true, extract TF association matrix
 #'
 #' @return list of Association matrices explaining the effects of each
 #' regulator to each gene
@@ -730,10 +769,9 @@ scMOSim <- function(omics, cellTypes, numberReps = 1, numberGroups = 1,
 #' omicsList <- sc_omicData(list("scRNA-seq"))
 #' sim <- scMOSim(omicsList, cell_types)
 #' res <- scOmicSettings(sim)
-scOmicSettings <- function(sim){
+scOmicSettings <- function(sim, TF = FALSE){
   asma <- sim$AssociationMatrices
   FC <- sim$FC
-  
   # Function to add two new columns to a matrix based on conditions
   add_new_columns <- function(matrix_A, vector1, vector2) {
     new_col1 <- character(nrow(matrix_A))
@@ -774,12 +812,6 @@ scOmicSettings <- function(sim){
 #' scOmicResults
 #'
 #' @param sim a simulated object from scMOSim function
-#' @param TF (optional) default is FALSE, if true, extract TF dataframe
-#' @param TFlist (optional), default is NULL. If a vector of gene names
-#'        is given, they are extracted by the results object. If no vector
-#'        is given, using the list of human TF from 
-#'        {http://humantfs.ccbr.utoronto.ca/download.php}
-#'
 #' @return list of seurat objects with simulated data
 #' @export
 #' @examples
@@ -790,30 +822,8 @@ scOmicSettings <- function(sim){
 #' sim <- scMOSim(omicsList, cell_types)
 #' res <- scOmicResults(sim)
 
-scOmicResults <- function(sim, TF = FALSE, TFlist = NULL){
+scOmicResults <- function(sim){
   df <- sim[grepl("Group_", names(sim))]
-  if (isTRUE(TF)){
-    if (is.null(TFlist)){
-      # Extract TF from the TF_human vector loaded in the package
-      data_env <- new.env(parent = emptyenv())
-      data("TF_human", envir = data_env, package = "MOSim")
-      TF_human <- data_env[["TF_human"]]
-    } else {
-      if (!is.vector(TFlist) || length(TFlist) <= 1) {
-        stop("Error: variable 'TFlist' is not a vector of genenames")
-      } else{
-        TF_human <- TFlist
-      }
-    }
-    # Extract the TFs according to the users list
-    for (group_name in names(df)) {
-      group <- df[[group_name]]
-      for (replicate_name in names(group)) {
-        replicate <- group[[replicate_name]]
-        df[[group_name]][[replicate_name]]$TF <- subset(replicate$`sim_scRNA-seq`, features = TF_human)
-      }
-    }
-  }
   return(df)
 }
 

@@ -163,6 +163,10 @@ simulation:
 -   clusters (optional): Number of co-expression patterns to simulate.
 -   cluster_size (optional): Number of features in each co-simulation
     cluster.  
+-   TF (optional): wether to extract TF dataframe as sim_TF in simulation object.
+-   TFdf (optional): If an association matrix of TF and Target_gene is given the 
+    TF expression values are extracted. If no data.frame is given, using the 
+    association of human TF from {https://tflink.net/}
 For example, to simulate data with specific settings, you can use the following  
 code:
 
@@ -174,7 +178,7 @@ sim <- scMOSim(omic_list, cell_types, numberReps = 2,
                numberGroups = 2, diffGenes = list(c(0.2, 0.3)), feature_no = 8000, 
                clusters = 3, mean = c(2*10^6, 1*10^6,2*10^6, 1*10^6), 
                sd = c(5*10^5, 2*10^5, 5*10^5, 2*10^5), 
-               regulatorEffect = list(c(0.1, 0.2), c(0.1, 0.2)))
+               regulatorEffect = list(c(0.1, 0.2), c(0.1, 0.2)), TF = FALSE)
 ```
 
 # Working with Simulation Results
@@ -219,9 +223,7 @@ You can extract the simulated matrices for all experimental conditions
 and biological replicates using the `scOmicResults` function. This
 provides you with the synthetic data for further analysis and
 visualization.
-Furthermore, you can use scOmicResults to also extract a matrix with the
-counts for only transcription factors.
 
 ```{r results, eval = FALSE}
-res <- scOmicResults(sim, TF = TRUE)
+res <- scOmicResults(sim)
 ```
