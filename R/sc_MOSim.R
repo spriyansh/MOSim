@@ -772,6 +772,17 @@ scMOSim <- function(omics, cellTypes, numberReps = 1, numberGroups = 1,
 scOmicSettings <- function(sim, TF = FALSE){
   asma <- sim$AssociationMatrices
   FC <- sim$FC
+  
+  # Add columns for FC
+  for (i in c(1:length(asma))){
+    # I have NAs in Gene_ID and Peak_ID, so make the vectors accordingly
+    asma[[i]]$Gene_FC <- ifelse(!is.na(asma[[i]]$Gene_ID), FC[[i]][[1]], NA)
+    if (length(FC) > 1){
+      
+      asma[[i]]$Peak_FC <- ifelse(!is.na(asma[[i]]$Peak_ID), FC[[i]][[2]], NA)
+    }
+  }
+  
   TFtoGene_Association <- list()
   
   ## Filter TFtoGene so only genes in our clusters are there
